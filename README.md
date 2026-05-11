@@ -1,73 +1,208 @@
-# React + TypeScript + Vite
+# R&M-fun — галерея персонажей Рик и Морти
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📋 Общая информация
 
-Currently, two official plugins are available:
+| Параметр | Значение |
+|----------|----------|
+| Название | R&M-fun |
+| Тип проекта | SPA на React + TypeScript |
+| API | [Rick and Morty API](https://rickandmortyapi.com/) |
+| Сложность | Junior+ / Middle начинающий |
+| Примерный срок | 2-3 недели (вечерами) |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Краткое описание
 
-## React Compiler
+Веб-приложение для просмотра персонажей сериала «Рик и Морти» с бесконечной прокруткой, поиском, фильтрацией и возможностью сохранять любимых персонажей.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🎯 Цели проекта
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. Продемонстрировать умение работать с REST API
+2. Показать понимание хуков React (useState, useEffect, useCallback, useMemo, useRef)
+3. Реализовать сложную логику с пагинацией и отменой запросов
+4. Показать навыки оптимизации производительности
+5. Продемонстрировать чистый код с TypeScript
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 👥 Пользовательские истории
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+| ID | Как пользователь | Я хочу | Чтобы |
+|----|------------------|--------|-------|
+| US-1 | Посетитель | Видеть список персонажей | Быстро находить интересных мне героев |
+| US-2 | Посетитель | Листать вниз | Следующие персонажи загружались автоматически |
+| US-3 | Посетитель | Искать по имени | Находить конкретного персонажа без скролла |
+| US-4 | Посетитель | Фильтровать по статусу | Видеть только живых/мёртвых персонажей |
+| US-5 | Посетитель | Кликать на карточку | Видеть детальную информацию |
+| US-6 | Посетитель | Добавлять в избранное | Вернуться к любимым персонажам позже |
+| US-7 | Посетитель | Видеть количество результатов | Понимать масштаб выдачи |
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ⚙️ Функциональные требования
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Обязательные (MVP)
+
+| ID | Требование | Детали |
+|----|------------|--------|
+| F-01 | Бесконечная прокрутка | При скролле до 80% страницы — автоматическая загрузка следующей страницы |
+| F-02 | Список карточек | Аватарка, имя, статус (с цветовой индикацией), вид персонажа |
+| F-03 | Цветовая индикация | Alive — зеленый, Dead — красный, unknown — серый |
+| F-04 | Модальное окно | При клике на карточку: полное имя, локация, список эпизодов (первые 3), дата создания |
+| F-05 | Поиск по имени | Поле ввода с debounce (500 мс). Сбрасывает список при новом поиске |
+| F-06 | Фильтр по статусу | Селект или радиокнопки: All / Alive / Dead / unknown |
+| F-07 | Счетчик результатов | Отображает "Найдено: X персонажей" |
+| F-08 | Спиннер загрузки | Первая загрузка — спиннер по центру |
+| F-09 | Скелетоны | При подгрузке следующих страниц — скелетоны карточек |
+| F-10 | Обработка ошибок | Сообщение "Ошибка загрузки" + кнопка "Повторить" |
+| F-11 | Пустое состояние | Если нет результатов — сообщение "Ничего не найдено" с иконкой |
+| F-12 | Кнопка "Наверх" | Появляется после скролла 500px, плавный скролл наверх |
+
+### Дополнительные (по желанию)
+
+| ID | Требование | Детали |
+|----|------------|--------|
+| F-13 | Избранное | Иконка сердечка. Список favorites в localStorage. Отдельная страница /favorites |
+| F-14 | Сброс фильтров | Кнопка "Сбросить" для очистки поиска и статуса |
+| F-15 | Адаптив | Мобилка: 1 колонка, планшет: 2, десктоп: 3-4 |
+| F-16 | URL параметры | Фильтры сохраняются в URL (?status=alive&name=rick) |
+| F-17 | Тёмная тема | Переключатель светлая/тёмная тема |
+| F-18 | Бесконечный скролл на кнопку | Альтернативная кнопка "Загрузить ещё" |
+
+---
+
+## ⚡ Нефункциональные требования
+
+| ID | Требование | Критерий |
+|----|------------|----------|
+| N-01 | Типизация | Что-либо должно быть типизировано. ❌ Редко используется `any` |
+| N-02 | Кеширование данных | Загруженные страницы сохраняются в кэш. При повторном запросе — данные из кэша |
+| N-03 | Debounce поиска | Задержка 300-500 мс между вводом и запросом |
+| N-04 | Отмена запросов | При смене фильтров/поиска — старые запросы отменяются через AbortController |
+| N-05 | Мемоизация | CharacterCard обернут в React.memo. useCallback для функций |
+| N-06 | Чистота компонентов | Компонент не должен превышать 150 строк кода |
+| N-07 | Переиспользование | Вынесенные компоненты: CharacterCard, Modal, Filters, Skeletons |
+| N-08 | Доступность | alt для изображений, управление с клавиатуры (Tab, Enter) |
+| N-09 | Производительность | Intersection Observer отключается при loading = true |
+| N-10 | Семантическая верстка | Использовать `<main>`, `<section>`, `<article>`, `<ul>`/`<li>` для списка |
+
+---
+
+## 🏗️ Технические требования
+
+### Стек технологий
+
+| Область | Технологии |
+|---------|------------|
+| Фреймворк | React 18+ |
+| Язык | TypeScript 5+ |
+| Сборщик | Vite / Create React App |
+| Стили | CSS Modules / Tailwind CSS / Styled Components |
+| HTTP клиент | fetch (нативный) |
+| Стейт-менеджмент | React Context + useReducer / кастомные хуки |
+| Линтинг | ESLint + Prettier |
+| Хуки | useState, useEffect, useCallback, useMemo, useRef, useContext |
+
+### Кастомные хуки для реализации
+
+| Хук | Назначение |
+|-----|------------|
+| `useDebounce` | Задержка ввода для поиска |
+| `useIntersectionObserver` | Определение когда элемент виден для подгрузки |
+| `useLocalStorage` | Работа с избранным |
+| `useCharacters` | Основная логика загрузки персонажей |
+### Уровни состояния
+
+| Уровень | Где хранится | Что хранит | Почему |
+|---------|--------------|------------|--------|
+| **Локальное** | `useState` в компонентах | `isModalOpen`, `inputValue` | Никому кроме компонента не нужно |
+| **Компонентное** | `useCharacters` хук | `characters`, `loading`, `page`, `hasMore` | Нужно только странице Home |
+| **Глобальное** | `FavoritesContext` | `favorites: number[]` | Нужно и в карточках, и на странице избранного |
+
+Размеры и отступы
+
+    Ширина контейнера: 1200px max-width
+
+    Карточка: ширина 280px (десктоп)
+
+    Скругление карточек: 12px
+
+    Скругление модального окна: 16px
+
+    Отступы между карточками: 20px
+
+Требования к адаптиву
+Устройство	Ширина	Колонок	Отступы
+Mobile	< 640px	1	16px
+Tablet	640px - 1024px	2	20px
+Desktop	> 1024px	3-4	24px
+🧪 Тестовые сценарии (чек-лист)
+Базовые сценарии
+
+    Страница открывается, отображаются первые 20 персонажей
+
+    При скролле вниз подгружаются следующие 20
+
+    Поиск по "Rick" показывает только персонажей с Rick в имени
+
+    Смена фильтра на "Alive" показывает только живых
+
+    Клик на карточку открывает модалку
+
+    Закрытие модалки работает (крестик, клик вне, Escape)
+
+    При ошибке API показывается сообщение об ошибке
+
+Краевые сценарии
+
+    Поиск несуществующего имени показывает "Ничего не найдено"
+
+    При быстром изменении фильтров старые запросы отменяются
+
+    Кнопка "Наверх" появляется только после скролла
+
+    После добавления в избранное — иконка меняет состояние
+
+    Избранное сохраняется после перезагрузки страницы
+
+    Отключенный интернет показывает ошибку
+
+Производительность
+
+    Lighthouse Performance > 90
+
+    Нет лишних запросов в Network
+
+    Скелетоны видны при загрузке
+
+    Скролл не лагает на 200+ карточках
+
+📝 Требования к коду
+Стиль кода
+
+    ESLint с конфигурацией react-app / airbnb
+
+    Prettier с настройками по умолчанию
+
+    Стрелочные функции вместо function
+
+    Named exports вместо default (кроме компонентов страниц)
+
+    Имена файлов: PascalCase для компонентов, camelCase для утилит/хуков
+
+Комментирование
+
+    Сложные логические блоки должны быть прокомментированы
+
+    JSDoc для публичных функций и хелперов
+
+    Комментарии на русском или английском (единообразно)
+
+Git
+
+    Conventional Commits: feat: add search input, fix: abort old requests
+
+    feature-ветки для каждой фичи
+
+    Pull Request с описанием изменений
