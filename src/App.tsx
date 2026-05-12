@@ -2,6 +2,7 @@ import './App.css'
 import {useEffect, useState} from "react";
 import {fetchCharacters} from "./api/getData.ts";
 import type {Character} from "./types/Character.ts";
+import Header from "./components/Header/Header.tsx";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
   console.log(characters)
   return (
     <div>
+      <Header />
       {characters.map(character => (
           <div key={character.id}>
             Name: {character.name}
