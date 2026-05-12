@@ -8,14 +8,15 @@ const API = axios.create({
     },
 });
 
-export const fetchCharacters = (page: string): Promise<Array<Character>> => {
-    return  API.get("/character", {
-        params: {
-            page,
-        }
-    })
-        .then(resp => resp.data?.results)
-        .catch(err => {
-            throw new Error("роизошла ошибка при запросе персонажей: ", err)
+export const fetchCharacters = async (page: string): Promise<Array<Character>> => {
+    try {
+        const resp = await API.get("/character", {
+            params: {
+                page,
+            }
         });
+        return resp.data?.results;
+    } catch (err) {
+        throw new Error("Произошла ошибка при запросе Character: " + err);
+    }
 };

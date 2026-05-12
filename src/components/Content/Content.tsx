@@ -5,20 +5,37 @@ import type {Character} from "../../types/Character.ts";
 
 function Content() {
 
-    const [characters, setCharacters] = useState<Array<Character> | null>(null)
+    const [characters, setCharacters] = useState<Array<Character> | []>([]);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
 
         const fetchData = async () => {
-            const data = await fetchCharacters("1");
-            setCharacters(data);
+            try {
+                setLoading(true);
+                const data = await fetchCharacters("1");
+                setCharacters(data);
+            } catch (e) {
+                setError("Ошибка! Не удалось получить персонажей");
+            } finally {
+                setLoading(false);
+            }
         };
 
-        fetchData();
+        void fetchData();
     }, []);
 
-    if (!characters) {
+    if (loading) {
         return <div>Загрузка</div>
+    }
+
+    if (error) {
+        return (
+            <div>
+                ⚠️ {error}
+            </div>
+        )
     }
 
     return (
