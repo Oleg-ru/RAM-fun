@@ -2,6 +2,7 @@ import './Content.css'
 import {useEffect, useState} from "react";
 import {fetchCharacters} from "../../api/getData.ts";
 import type {Character} from "../../types/Character.ts";
+import {CharacterItem} from "../Character/CharacterItem.tsx";
 
 function Content() {
 
@@ -39,13 +40,8 @@ function Content() {
     }
 
     return (
-        <div>
-            {characters.map(character => (
-                <div key={character.id}>
-                    Name: {character.name}
-                    <img src={character.image} alt="" width={100} height={150}/>
-                </div>
-            ))}
+        <div className="characters-container">
+            {characters.map(character => <CharacterItem key={character.id} {...character}/>)}
         </div>
     );
 }

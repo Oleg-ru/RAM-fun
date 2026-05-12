@@ -1,0 +1,209 @@
+/* Базовые стили для сетки */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Карточка персонажа - оптимизированная версия */
+.character-item {
+    /* Базовые стили */
+    background: linear-gradient(135deg, #1b4d1f 0%, #0d2b10 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid #4a8c3f;
+    cursor: pointer;
+
+    /* Ключевые оптимизации для устранения мигания */
+    position: relative;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+
+    /* Изоляция от соседних элементов */
+    isolation: isolate;
+
+    /* Запрещаем влияние на соседей */
+    contain: layout style paint;
+
+    /* Плавность без глюков */
+    transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+
+    /* Стабильная тень без анимации */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover эффект - только безопасные свойства */
+.character-item:hover {
+    transform: translateY(-4px);
+    border-color: #7ed957;
+    /* Тень меняется мгновенно, без transition */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+/* Изображение - без анимаций */
+.character-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+    /* Отключаем все transition */
+    transition: none;
+}
+
+/* Контент карточки */
+.character-info {
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(11, 33, 12, 0.95), rgba(5, 15, 6, 0.98));
+    position: relative;
+    z-index: 1;
+}
+
+/* Имя персонажа */
+.character-name {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #7ed957;
+    margin: 0 0 12px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+    word-break: break-word;
+}
+
+/* Статус */
+.character-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Точка статуса - упрощенная анимация */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Цвета статусов */
+.status-alive {
+    color: #2ecc71;
+}
+.status-alive .status-dot {
+    background-color: #2ecc71;
+    box-shadow: 0 0 6px #2ecc71;
+}
+
+.status-dead {
+    color: #e74c3c;
+}
+.status-dead .status-dot {
+    background-color: #e74c3c;
+    box-shadow: 0 0 6px #e74c3c;
+}
+
+.status-unknown {
+    color: #95a5a6;
+}
+.status-unknown .status-dot {
+    background-color: #95a5a6;
+}
+
+/* Детали */
+.character-details {
+    margin-top: 16px;
+    border-top: 1px solid rgba(126, 217, 87, 0.2);
+    padding-top: 12px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+    gap: 10px;
+}
+
+.detail-label {
+    color: #7ed957;
+    font-weight: bold;
+    font-family: monospace;
+    flex-shrink: 0;
+}
+
+.detail-value {
+    color: #ddd;
+    text-align: right;
+    font-family: monospace;
+    word-break: break-word;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .character-name {
+        font-size: 1.2rem;
+    }
+
+    .character-image {
+        height: 240px;
+    }
+
+    .character-info {
+        padding: 16px;
+    }
+
+    .detail-item {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .detail-value {
+        text-align: left;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 12px;
+    }
+}
+
+/* Оптимизация для производительности */
+@media (prefers-reduced-motion: reduce) {
+    .character-item {
+        transition: none;
+    }
+
+    .character-item:hover {
+        transform: none;
+    }
+}
+
+/* Убираем все анимации и псевдоэлементы */
+.character-item::before,
+.character-item::after {
+    display: none;
+}
+
+/* Статус без анимации пульсации */
+/* Убрана animation: pulse - она вызывала перерисовку */
