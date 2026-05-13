@@ -1,5 +1,5 @@
 import axios from "axios";
-import type {Character} from "../types/Character.ts";
+import type {CharacterResponse} from "../types/CharacterResponse.ts";
 
 const API = axios.create({
     baseURL: "https://rickandmortyapi.com/api",
@@ -8,14 +8,15 @@ const API = axios.create({
     },
 });
 
-export const fetchCharacters = async (page: string): Promise<Array<Character>> => {
+export const fetchCharacters = async (page: string, options?: { signal?: AbortSignal }): Promise<CharacterResponse> => {
     try {
         const resp = await API.get("/character", {
+            signal: options?.signal,
             params: {
                 page,
             }
         });
-        return resp.data?.results;
+        return resp.data;
     } catch (err) {
         throw new Error("Произошла ошибка при запросе Character: " + err);
     }
