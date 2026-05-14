@@ -60,7 +60,6 @@ function Content() {
 
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && !loading && currentPage < pages && elementRef.current) {
-                console.log('✅ 30% достигнуто! Функция сработала!')
                 loadMoreHandle();
             }
         }, {root: null, threshold: 0.3, rootMargin: "0px"});
@@ -94,7 +93,7 @@ function Content() {
             <div className="characters-container">
                 {characters.map(character => <CharacterItem key={character.id + currentPage} {...character}/>)}
             </div>
-            {loading && characters.length > 0 && <div className="bg-[#2ecc71] p-3 rounded">Загрузка...</div>}
+            {loading && characters.length > 0 && <div className="mt-12 flex justify-center items-center bg-[#2ecc71] p-3 rounded ">Загрузка...</div>}
             {error && characters.length > 0 && <div className="text-[#e74c3c]">Ошибка загрузки новых персонажей</div>}
 
             <div
