@@ -77,7 +77,9 @@ function Content() {
     }, [currentPage, loading, pages]);
 
     if (loading && characters.length === 0) {
-        return <div>Загрузка</div>
+        return <div className="flex justify-center items-center h-full">
+            <div className="loader"></div>
+        </div>
     }
 
     if (error && characters.length === 0) {

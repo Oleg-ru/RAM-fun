@@ -4,7 +4,7 @@ import Content from "./components/Content/Content.tsx";
 
 function App() {
   return (
-    <div>
+    <div className="root-app">
       <Header />
       <Content />
     </div>
