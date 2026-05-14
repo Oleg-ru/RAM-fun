@@ -13,14 +13,14 @@ function Content() {
     const [currentPage, setCurrentPage] = useState(1);
 
     const elementRef = useRef(null);
+    const isFetchingRef = useRef(false);
 
     useEffect(() => {
-        let isFetching = false; // Локальный флаг для предотвращения дублирующих вызовов
 
         const fetchData = async () => {
             // Проверяем, не выполняется ли уже запрос
-            if (isFetching) return;
-            isFetching = true;
+            if (isFetchingRef.current) return; // Проверяем значение из ref
+            isFetchingRef.current = true; // Меняем значение в ref
 
             try {
                 if (error) {
@@ -43,7 +43,7 @@ function Content() {
                 setError("Ошибка! Не удалось получить персонажей");
             } finally {
                 setLoading(false);
-                isFetching = false; // Сбрасываем флаг после завершения
+                isFetchingRef.current = false; // Сбрасываем значение в ref
             }
         };
 
