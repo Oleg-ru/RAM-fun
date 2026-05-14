@@ -3,8 +3,9 @@ import {useEffect, useRef, useState} from "react";
 import {fetchCharacters} from "../../api/getData.ts";
 import type {Character} from "../../types/Character.ts";
 import {CharacterItem} from "../Character/CharacterItem.tsx";
+import type {SearchProps} from "../../types/searchProps.ts";
 
-function Content() {
+function Content({searchName, searchStatus}:Pick<SearchProps, 'searchName' | 'searchStatus'>) {
 
     const [characters, setCharacters] = useState<Array<Character> | []>([]);
     const [error, setError] = useState("");
