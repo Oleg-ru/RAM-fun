@@ -1,5 +1,5 @@
 import './Content.css'
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {fetchCharacters} from "../../api/getData.ts";
 import type {Character} from "../../types/Character.ts";
 import {CharacterItem} from "../Character/CharacterItem.tsx";
@@ -11,6 +11,8 @@ function Content() {
     const [loading, setLoading] = useState(false);
     const [pages, setPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+
+    const elementRef = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,6 +31,9 @@ function Content() {
                     setPages(data.info.pages);
                 }
             } catch (e) {
+                if (currentPage !== 1) {
+                    setCurrentPage(prev => prev - 1);
+                }
                 setError("Ошибка! Не удалось получить персонажей");
             } finally {
                 setLoading(false);
@@ -38,9 +43,32 @@ function Content() {
         void fetchData();
     }, [currentPage]);
 
-    const loadMoreHandle = () => {
-        setCurrentPage(prev => prev + 1);
-    };
+    useEffect(() => {
+
+        function loadMoreHandle() {
+            if (currentPage < pages && !loading) {
+                setCurrentPage(prev => prev + 1);
+            }
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !loading && currentPage < pages && elementRef.current) {
+                console.log('✅ 30% достигнуто! Функция сработала!')
+                loadMoreHandle()
+            }
+        }, {root: null, threshold: 0.3, rootMargin: "0px"});
+
+        if (elementRef.current) {
+            observer.observe(elementRef.current)
+        }
+
+        return () => {
+            if (elementRef.current) {
+                observer.unobserve(elementRef.current);
+                observer.disconnect();
+            }
+        }
+    }, [currentPage, loading, pages]);
 
     if (loading && characters.length === 0) {
         return <div>Загрузка</div>
@@ -61,19 +89,15 @@ function Content() {
             </div>
             {loading && characters.length > 0 && <div className="bg-[#2ecc71] p-3 rounded">Загрузка...</div>}
             {error && characters.length > 0 && <div className="text-[#e74c3c]">Ошибка загрузки новых персонажей</div>}
-            {currentPage !== pages && (
-                <div className="pt-5 pb-5 flex justify-center items-center">
-                    <button className={`w-1/6 mt-5 cursor-pointer bg-[#7ed957] rounded transition-all
-                                       active:bg-[#2ecc71] active:delay-100
-                                       ${loading ? 'hover:cursor-not-allowed' : 'hover:w-1/5 hover:duration-200 hover:delay-200'}
-                                       `}
-                            onClick={loadMoreHandle}
-                            disabled={loading}
-                    >
-                        Load more
-                    </button>
-                </div>
-            )}
+
+            <div
+                ref={elementRef}
+                style={{
+                    height: '10px',     // маленькая высота
+                    background: 'transparent',  // прозрачный
+                    marginTop: '10px'   // небольшой отступ
+                }}
+            />
         </>
     );
 }

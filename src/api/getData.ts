@@ -18,6 +18,9 @@ export const fetchCharacters = async (page: string, options?: { signal?: AbortSi
         });
         return resp.data;
     } catch (err) {
-        throw new Error("Произошла ошибка при запросе Character: " + err);
+        if (axios.isAxiosError(err)) {
+            throw new Error(`"Произошла ошибка при запросе Character": ${err.message}`, { cause: err });
+        }
+        throw err; // не-axios ошибки пробрасываем как есть
     }
 };
