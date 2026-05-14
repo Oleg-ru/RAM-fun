@@ -15,7 +15,13 @@ function Content() {
     const elementRef = useRef(null);
 
     useEffect(() => {
+        let isFetching = false; // Локальный флаг для предотвращения дублирующих вызовов
+
         const fetchData = async () => {
+            // Проверяем, не выполняется ли уже запрос
+            if (isFetching) return;
+            isFetching = true;
+
             try {
                 if (error) {
                     setError("");
@@ -37,6 +43,7 @@ function Content() {
                 setError("Ошибка! Не удалось получить персонажей");
             } finally {
                 setLoading(false);
+                isFetching = false; // Сбрасываем флаг после завершения
             }
         };
 
@@ -54,7 +61,7 @@ function Content() {
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && !loading && currentPage < pages && elementRef.current) {
                 console.log('✅ 30% достигнуто! Функция сработала!')
-                loadMoreHandle()
+                loadMoreHandle();
             }
         }, {root: null, threshold: 0.3, rootMargin: "0px"});
 
