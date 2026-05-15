@@ -6,7 +6,7 @@ import type {Search} from "./types/search.ts";
 
 function App() {
 
-    const [searchParams, setSearchParams] = useState()
+    const [searchParams, setSearchParams] = useState({})
 
     const onSearch: Search = (searchName: string, searchStatus?: string) => {
         setSearchParams({searchName, searchStatus});
