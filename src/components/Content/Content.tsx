@@ -6,6 +6,7 @@ import {CharacterItem} from "../Character/CharacterItem.tsx";
 import {fetchSearchCharacters} from "../../api/getCharactersByName.ts";
 import type {CharacterResponse} from "../../types/CharacterResponse.ts";
 import type {SearchParams} from "../../types/search.ts";
+import {throttle} from "../../utils/throttle.ts";
 
 function Content({searchParams}: SearchParams) {
 
@@ -70,9 +71,11 @@ function Content({searchParams}: SearchParams) {
             }
         }
 
+        const throttledLoadMore = throttle(loadMoreHandle, 5000); // Ограничение: 1 вызов в секунду
+
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && !loading && currentPage < pages && elementRef.current) {
-                loadMoreHandle();
+                throttledLoadMore();
             }
         }, {root: null, threshold: 0.3, rootMargin: "0px"});
 
