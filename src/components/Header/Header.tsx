@@ -1,12 +1,12 @@
 import './Header.css'
 import Search from "../Search/Search.tsx";
-import type {SearchProps} from "../../types/searchProps.ts";
+import type {SearchProps} from "../../types/search.ts";
 
-function Header({searchName, setSearchName, searchStatus, setSearchStatus}: SearchProps) {
+function Header({onSearch}: SearchProps) {
     return (
         <div className="header-container">
             <div>Логотип</div>
-            <Search />
+            <Search onSearch={onSearch}/>
         </div>
     );
 }

@@ -3,9 +3,11 @@ import {useEffect, useRef, useState} from "react";
 import {fetchCharacters} from "../../api/getData.ts";
 import type {Character} from "../../types/Character.ts";
 import {CharacterItem} from "../Character/CharacterItem.tsx";
-import type {SearchProps} from "../../types/searchProps.ts";
+import {fetchSearchCharacters} from "../../api/getCharactersByName.ts";
+import type {CharacterResponse} from "../../types/CharacterResponse.ts";
+import type {SearchParams} from "../../types/search.ts";
 
-function Content({searchName, searchStatus}:Pick<SearchProps, 'searchName' | 'searchStatus'>) {
+function Content({searchParams}: SearchParams) {
 
     const [characters, setCharacters] = useState<Array<Character> | []>([]);
     const [error, setError] = useState("");
@@ -28,12 +30,21 @@ function Content({searchName, searchStatus}:Pick<SearchProps, 'searchName' | 'se
                     setError("");
                 }
                 setLoading(true);
-                const data = await fetchCharacters(`${currentPage}`);
-                setCharacters(prev => {
-                    const map = new Map(prev.map(char => [char.id, char]));
-                    data.results.forEach(char => map.set(char.id, char));
-                    return Array.from(map.values());
-                });
+                let data!: CharacterResponse;
+                if ('searchName' in searchParams || 'searchStatus' in searchParams) {
+                    console.log("вызвался поиск по параметрам")
+                    data = await fetchSearchCharacters(searchParams.searchName, searchParams?.searchStatus);
+                    setPages(data.info.pages);
+                    setCharacters(data.results);
+                } else {
+                    data = await fetchCharacters(`${currentPage}`);
+                    setCharacters(prev => {
+                        const map = new Map(prev.map(char => [char.id, char]));
+                        data.results.forEach((char: Character) => map.set(char.id, char));
+                        return Array.from(map.values());
+                    });
+                }
+
                 if (!pages) {
                     setPages(data.info.pages);
                 }
@@ -49,7 +60,7 @@ function Content({searchName, searchStatus}:Pick<SearchProps, 'searchName' | 'se
         };
 
         void fetchData();
-    }, [currentPage]);
+    }, [currentPage, searchParams]);
 
     useEffect(() => {
 
@@ -65,7 +76,7 @@ function Content({searchName, searchStatus}:Pick<SearchProps, 'searchName' | 'se
             }
         }, {root: null, threshold: 0.3, rootMargin: "0px"});
 
-        if (elementRef.current) {
+        if (elementRef.current && pages > 1) {
             observer.observe(elementRef.current)
         }
 
