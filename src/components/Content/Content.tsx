@@ -36,9 +36,9 @@ function Content({searchParams}: SearchParams) {
                     setError("");
                 }
                 let data!: CharacterResponse;
-                if ('searchName' in searchParams || 'searchStatus' in searchParams) {
+                if ('searchName' in searchParams && typeof searchParams.searchName === 'string') {
                     setLoadingSearch(true)
-                    data = await fetchSearchCharacters(searchParams.searchName, searchParams?.searchStatus);
+                    data = await fetchSearchCharacters(searchParams.searchName, 'searchStatus' in searchParams ? searchParams.searchStatus : undefined);
                     setPages(data.info.pages);
                     setCharacters(data.results);
                 } else {
