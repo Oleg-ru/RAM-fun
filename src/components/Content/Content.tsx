@@ -19,7 +19,7 @@ function Content({searchParams}: SearchParams) {
     const [pages, setPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [currentFilterStatuses, setCurrentFilterStatuses] = useState<Array<Character["status"]>>([]);
-    const [idCharacterDetails, setIdCharacterDetails] = useState(null);
+    const [idCharacterDetails, setIdCharacterDetails] = useState<number | null>(null);
 
     const elementRef = useRef(null);
     const isFetchingRef = useRef(false);

@@ -1,11 +1,11 @@
 import './Character.css'
 import type {Character} from '../../types/Character.ts'
+import type {Dispatch, SetStateAction} from "react";
 
-export const CharacterItem = (props: Character) => {
-    const {id, name, status, location, origin, image, setId} = props;
+export const CharacterItem = ({id, name, status, location, origin, image, setId}: Character & {setId: Dispatch<SetStateAction<number | null>>}) => {
 
     return (
-        <div className="character-item" onClick={() => {setId(id)}}>
+        <div className="character-item" onClick={() => setId(id)}>
             <img src={image} alt={name} className="character-image" />
             <div className="character-info">
                 <h3 className="character-name">{name}</h3>

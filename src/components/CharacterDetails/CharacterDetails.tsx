@@ -1,8 +1,8 @@
-import {useEffect, useState} from "react";
+import {type Dispatch, type SetStateAction, useEffect, useState} from "react";
 import {fetchCharacterDetails} from "../../api/getCharacterDetails.ts";
 import type {Character} from "../../types/Character.ts";
 
-function CharacterDetails({id, setCloseModal}: {id: number}) {
+function CharacterDetails({id, setCloseModal}: {id: number, setCloseModal: Dispatch<SetStateAction<number | null>>}) {
 
     const [character, setCharacter] = useState<Character>();
     const [isLoading, setIsLoading] = useState(false)
