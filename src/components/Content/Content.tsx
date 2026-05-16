@@ -7,14 +7,17 @@ import {fetchSearchCharacters} from "../../api/getCharactersByName.ts";
 import type {CharacterResponse} from "../../types/CharacterResponse.ts";
 import type {SearchParams} from "../../types/search.ts";
 import {throttle} from "../../utils/throttle.ts";
+import FilterCharacter from "../FilterCharacter/FilterCharacter.tsx";
 
 function Content({searchParams}: SearchParams) {
 
     const [characters, setCharacters] = useState<Array<Character> | []>([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [loadingSearch, setLoadingSearch] = useState(false);
     const [pages, setPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [currentFilterStatuses, setCurrentFilterStatuses] = useState<Array<"Alive" | "Dead" | "unknown">>([]);
 
     const elementRef = useRef(null);
     const isFetchingRef = useRef(false);
@@ -30,14 +33,14 @@ function Content({searchParams}: SearchParams) {
                 if (error) {
                     setError("");
                 }
-                setLoading(true);
                 let data!: CharacterResponse;
                 if ('searchName' in searchParams || 'searchStatus' in searchParams) {
-                    console.log("вызвался поиск по параметрам")
+                    setLoadingSearch(true)
                     data = await fetchSearchCharacters(searchParams.searchName, searchParams?.searchStatus);
                     setPages(data.info.pages);
                     setCharacters(data.results);
                 } else {
+                    setLoading(true);
                     data = await fetchCharacters(`${currentPage}`);
                     setCharacters(prev => {
                         const map = new Map(prev.map(char => [char.id, char]));
@@ -57,6 +60,7 @@ function Content({searchParams}: SearchParams) {
             } finally {
                 setLoading(false);
                 isFetchingRef.current = false; // Сбрасываем значение в ref
+                setLoadingSearch(false);
             }
         };
 
@@ -91,7 +95,7 @@ function Content({searchParams}: SearchParams) {
         }
     }, [currentPage, loading, pages]);
 
-    if (loading && characters.length === 0) {
+    if (loadingSearch || loading && characters.length === 0) {
         return <div className="flex justify-center items-center h-full">
             <div className="loader"></div>
         </div>
@@ -107,8 +111,19 @@ function Content({searchParams}: SearchParams) {
 
     return (
         <>
+            <FilterCharacter characters={characters}
+                             currentFilterStatuses={currentFilterStatuses}
+                             setCurrentFilterStatuses={setCurrentFilterStatuses}
+            />
             <div className="characters-container">
-                {characters.map(character => <CharacterItem key={character.id + currentPage} {...character}/>)}
+                {characters.map(character => {
+                    if (currentFilterStatuses.length > 0) {
+                        return currentFilterStatuses.includes(character.status)
+                            ? <CharacterItem key={character.id + currentPage} {...character}/>
+                            : null;
+                    }
+                    return <CharacterItem key={character.id + currentPage} {...character}/>
+                })}
             </div>
             {loading && characters.length > 0 && <div className="mt-12 flex justify-center items-center bg-[#2ecc71] p-3 rounded ">Загрузка...</div>}
             {error && characters.length > 0 && <div className="text-[#e74c3c]">Ошибка загрузки новых персонажей</div>}
