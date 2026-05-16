@@ -8,10 +8,12 @@ function CharacterDetails({id, setCloseModal}: {id: number}) {
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
+        const abortController = new AbortController();
+        
         const getData = async () => {
             try {
                 setIsLoading(true);
-                const data = await fetchCharacterDetails(id);
+                const data = await fetchCharacterDetails(id, abortController.signal);
                 setCharacter(data.data);
             } catch (error) {
                 throw new Error("Ошибка получения детальной информации о персонаже");
@@ -20,6 +22,10 @@ function CharacterDetails({id, setCloseModal}: {id: number}) {
             }
         };
         void getData();
+
+        return () => {
+            abortController.abort();
+        }
     }, []);
 
     return (

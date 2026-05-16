@@ -8,6 +8,6 @@ const API = axios.create({
     }
 });
 
-export const fetchCharacterDetails = async (id: number): Promise<{data: Character}> => {
-    return API.get(`/character/${id}`)
+export const fetchCharacterDetails = async (id: number, options: AbortSignal): Promise<{ data: Character }> => {
+    return API.get(`/character/${id}`, {signal: options})
 };
