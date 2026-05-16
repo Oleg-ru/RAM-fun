@@ -1,16 +1,21 @@
 import type {Character} from "../../types/Character.ts";
+import  {type Dispatch, type SetStateAction} from "react";
+import React from "react";
 
-function FilterCharacter({characters, currentFilterStatuses, setCurrentFilterStatuses}: {characters: Array<Character>}) {
+type CharacterStatus = Character["status"];
 
-    const statuses = [...new Set(characters.map(character => character.status))];
+function FilterCharacter({characters, currentFilterStatuses, setCurrentFilterStatuses}: {characters: Array<Character>, currentFilterStatuses: Array<CharacterStatus>, setCurrentFilterStatuses: Dispatch<SetStateAction<Array<CharacterStatus>>>}) {
 
-    const onClickOnStatus = (e) => {
+    const statuses = [...new Set(characters.map(character => character.status))] as Array<CharacterStatus>;
+
+    const onClickOnStatus = (e: React.MouseEvent<HTMLButtonElement>) => {
         setCurrentFilterStatuses(prev => {
+            // @ts-ignore
             const status = e.target.innerText;
             if (prev.includes(status)) {
                 return [...prev.filter(currentStatus => currentStatus !== status)]
             }
-            return [...prev, e.target.innerText];
+            return [...prev, status];
         })
     };
 
