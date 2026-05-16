@@ -8,6 +8,7 @@ import type {CharacterResponse} from "../../types/CharacterResponse.ts";
 import type {SearchParams} from "../../types/search.ts";
 import {throttle} from "../../utils/throttle.ts";
 import FilterCharacter from "../FilterCharacter/FilterCharacter.tsx";
+import CharacterDetails from "../CharacterDetails/CharacterDetails.tsx";
 
 function Content({searchParams}: SearchParams) {
 
@@ -18,6 +19,7 @@ function Content({searchParams}: SearchParams) {
     const [pages, setPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [currentFilterStatuses, setCurrentFilterStatuses] = useState<Array<Character["status"]>>([]);
+    const [idCharacterDetails, setIdCharacterDetails] = useState(null);
 
     const elementRef = useRef(null);
     const isFetchingRef = useRef(false);
@@ -119,10 +121,10 @@ function Content({searchParams}: SearchParams) {
                 {characters.map(character => {
                     if (currentFilterStatuses.length > 0) {
                         return currentFilterStatuses.includes(character.status)
-                            ? <CharacterItem key={character.id + currentPage} {...character}/>
+                            ? <CharacterItem key={character.id + currentPage} {...character} setId={setIdCharacterDetails}/>
                             : null;
                     }
-                    return <CharacterItem key={character.id + currentPage} {...character}/>
+                    return <CharacterItem key={character.id + currentPage} {...character} setId={setIdCharacterDetails}/>
                 })}
             </div>
             {loading && characters.length > 0 && <div className="mt-12 flex justify-center items-center bg-[#2ecc71] p-3 rounded ">Загрузка...</div>}
@@ -136,6 +138,7 @@ function Content({searchParams}: SearchParams) {
                     marginTop: '10px'   // небольшой отступ
                 }}
             />
+            {idCharacterDetails && <CharacterDetails id={idCharacterDetails} setCloseModal={setIdCharacterDetails}/>}
         </>
     );
 }
