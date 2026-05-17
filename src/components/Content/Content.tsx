@@ -9,6 +9,7 @@ import type {SearchParams} from "../../types/search.ts";
 import {throttle} from "../../utils/throttle.ts";
 import FilterCharacter from "../FilterCharacter/FilterCharacter.tsx";
 import CharacterDetails from "../CharacterDetails/CharacterDetails.tsx";
+import CharacterItemSkeleton from "../Character/CharacterItemSkeleton.tsx";
 
 function Content({searchParams}: SearchParams) {
 
@@ -118,6 +119,7 @@ function Content({searchParams}: SearchParams) {
                              setCurrentFilterStatuses={setCurrentFilterStatuses}
             />
             <div className="characters-container">
+                <CharacterItemSkeleton />
                 {characters.map(character => {
                     if (currentFilterStatuses.length > 0) {
                         return currentFilterStatuses.includes(character.status)
