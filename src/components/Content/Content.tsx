@@ -99,8 +99,8 @@ function Content({searchParams}: SearchParams) {
     }, [currentPage, loading, pages]);
 
     if (loadingSearch || loading && characters.length === 0) {
-        return <div className="flex justify-center items-center h-full">
-            <div className="loader"></div>
+        return <div className="characters-container">
+            {Array.from({length: 8}).map((_, i) => <CharacterItemSkeleton key={`load-${i}`}/>)}
         </div>
     }
 
@@ -119,7 +119,6 @@ function Content({searchParams}: SearchParams) {
                              setCurrentFilterStatuses={setCurrentFilterStatuses}
             />
             <div className="characters-container">
-                <CharacterItemSkeleton />
                 {characters.map(character => {
                     if (currentFilterStatuses.length > 0) {
                         return currentFilterStatuses.includes(character.status)
@@ -129,7 +128,11 @@ function Content({searchParams}: SearchParams) {
                     return <CharacterItem key={character.id + currentPage} {...character} setId={setIdCharacterDetails}/>
                 })}
             </div>
-            {loading && characters.length > 0 && <div className="mt-12 flex justify-center items-center bg-[#2ecc71] p-3 rounded ">Загрузка...</div>}
+            {loading && characters.length > 0 && (
+                <div className="characters-container">
+                    {Array.from({length: 4}).map((_, i) => <CharacterItemSkeleton key={`load-${i}`}/>)}
+                </div>
+            )}
             {error && characters.length > 0 && <div className="text-[#e74c3c]">Ошибка загрузки новых персонажей</div>}
 
             <div
