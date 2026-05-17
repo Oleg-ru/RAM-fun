@@ -68,7 +68,7 @@ function Content({searchParams}: SearchParams) {
         };
 
         void fetchData();
-    }, [currentPage, searchParams]);
+    }, [currentPage, searchParams, error]);
 
     useEffect(() => {
 
@@ -106,8 +106,9 @@ function Content({searchParams}: SearchParams) {
 
     if (error && characters.length === 0) {
         return (
-            <div>
+            <div className="flex flex-col gap-3">
                 ⚠️ {error}
+                <button className="border p-1 rounded hover:bg-blue-300 delay-100 cursor-pointer active:bg-blue-300 active:text-amber-700" onClick={() => setError("")}>Retry</button>
             </div>
         )
     }
