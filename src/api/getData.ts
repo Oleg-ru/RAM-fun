@@ -19,6 +19,7 @@ export const fetchCharacters = async (page: string, options?: { signal?: AbortSi
         return resp.data;
     } catch (err) {
         if (axios.isAxiosError(err)) {
+            //Не получается отловить 429 даже через стандартный fetch
             throw new Error(`"Произошла ошибка при запросе Character": ${err.message}`, { cause: err });
         }
         throw err; // не-axios ошибки пробрасываем как есть
