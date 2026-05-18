@@ -56,9 +56,6 @@ function Content({searchParams}: SearchParams) {
                     setPages(data.info.pages);
                 }
             } catch (e) {
-                if (currentPage !== 1) {
-                    setCurrentPage(prev => prev - 1);
-                }
                 setError("Ошибка! Не удалось получить персонажей");
             } finally {
                 setLoading(false);
@@ -78,7 +75,7 @@ function Content({searchParams}: SearchParams) {
             }
         }
 
-        const throttledLoadMore = throttle(loadMoreHandle, 5000); // Ограничение: 1 вызов в секунду
+        const throttledLoadMore = throttle(loadMoreHandle, 5000);
 
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && !loading && currentPage < pages && elementRef.current) {
