@@ -1,43 +1,53 @@
 import {type Dispatch, type SetStateAction, useEffect, useState} from "react";
 import {fetchCharacterDetails} from "../../api/getCharacterDetails.ts";
 import type {Character} from "../../types/Character.ts";
+import CharacterDetailsSkeleton from "./CharacterDetailsSkeleton.tsx";
 
 function CharacterDetails({id, setCloseModal}: {id: number, setCloseModal: Dispatch<SetStateAction<number | null>>}) {
 
     const [character, setCharacter] = useState<Character>();
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<String | null>(null);
+    const [isRetry, setIsRetry] = useState(false);
 
     useEffect(() => {
         const abortController = new AbortController();
-        
+
         const getData = async () => {
             try {
                 setIsLoading(true);
+                setError(null);
                 const data = await fetchCharacterDetails(id, abortController.signal);
                 setCharacter(data.data);
             } catch (error) {
-                throw new Error("Ошибка получения детальной информации о персонаже");
+                setError("Ошибка получения детальной информации о персонаже");
             } finally {
                 setIsLoading(false);
             }
         };
+
         void getData();
 
         return () => {
             abortController.abort();
         }
-    }, []);
+    }, [id, isRetry]);
+
+    const retry = () => {
+        setIsRetry(prev => !prev);
+    };
 
     return (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center transition-opacity duration-100 backdrop-blur-sm" onClick={() => {setCloseModal(null)}}>
             <div className="bg-linear-to-br from-teal-500 via-blue-500 to-purple-600 rounded-2xl p-1 max-w-md w-full mx-4 shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
                 <div className="bg-white rounded-xl p-6 relative">
-                    {isLoading && (
-                        <div className="flex items-center justify-center py-8">
-                            <div className="animate-spin rounded-full h-12 w-12 border-4 border-teal-500 border-t-transparent"></div>
-                            <span className="ml-3 text-teal-600 font-medium">Loading from dimension...</span>
+                    {error && !character && (
+                        <div className="flex flex-col gap-2 bg-white rounded-xl p-6">
+                            <div className="text-red-400">{error}</div>
+                            <button onClick={retry} className="border rounded p-2 hover:bg-blue-300 hover:text-white delay-100 active:bg-blue-400">Retry</button>
                         </div>
                     )}
+                    {isLoading && <CharacterDetailsSkeleton />}
                     {character && (
                         <>
                             {/* Заголовок - имя с градиентом */}
