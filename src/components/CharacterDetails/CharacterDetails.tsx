@@ -2,6 +2,8 @@ import {type Dispatch, type SetStateAction, useEffect, useState} from "react";
 import {fetchCharacterDetails} from "../../api/getCharacterDetails.ts";
 import type {Character} from "../../types/Character.ts";
 import CharacterDetailsSkeleton from "./CharacterDetailsSkeleton.tsx";
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 function CharacterDetails({id, setCloseModal}: {id: number, setCloseModal: Dispatch<SetStateAction<number | null>>}) {
 
@@ -9,6 +11,7 @@ function CharacterDetails({id, setCloseModal}: {id: number, setCloseModal: Dispa
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<String | null>(null);
     const [isRetry, setIsRetry] = useState(false);
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
 
     useEffect(() => {
         const abortController = new AbortController();
@@ -58,10 +61,12 @@ function CharacterDetails({id, setCloseModal}: {id: number, setCloseModal: Dispa
                             {/* Изображение с рамкой и эффектом портала */}
                             <div className="relative mb-4">
                                 <div className="absolute -inset-1 bg-linear-to-r from-teal-400 to-blue-500 rounded-lg blur opacity-50"></div>
+                                {!isImageLoaded && <Skeleton height={392} className="relative w-full rounded-lg object-cover border-2 border-teal-400" />}
                                 <img
                                     src={character.image}
                                     alt={character.name}
-                                    className="relative w-full rounded-lg object-cover border-2 border-teal-400"
+                                    className={`relative w-full rounded-lg object-cover border-2 border-teal-400 ${!isImageLoaded ? 'hidden' : 'block'}`}
+                                    onLoad={() => {setIsImageLoaded(true)}}
                                 />
                                 {/* Бейдж статуса */}
                                 <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-bold text-white ${
