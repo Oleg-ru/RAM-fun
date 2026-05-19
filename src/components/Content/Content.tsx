@@ -11,9 +11,9 @@ import { useCharacterData } from "../../hooks/useCharacterData.ts";
 
 function Content({ searchParams }: {searchParams: SearchParams}) {
   const [currentFilterStatuses, setCurrentFilterStatuses] = useState<Array<Character["status"]>>([]);
-    const [idCharacterDetails, setIdCharacterDetails] = useState<number | null>(null);
 
-    const elementRef = useRef(null);
+  const [idCharacterDetails, setIdCharacterDetails] = useState<number | null>(null);
+  const elementRef = useRef(null);
 
   const {
     characters,
