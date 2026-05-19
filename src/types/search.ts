@@ -6,9 +6,7 @@ export interface SearchProps {
     onSearch: Search;
 }
 
-export interface SearchParams {
-    searchParams: {
-        searchName: string;
-        searchStatus?: string;
-    } | {};
-}
+export type SearchParams = {
+    searchName: string;
+    searchStatus?: string;
+} | {};
