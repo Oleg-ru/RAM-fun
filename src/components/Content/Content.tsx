@@ -1,19 +1,17 @@
 import './Content.css'
-import { useEffect, useRef, useState } from "react";
+import {useState } from "react";
 import type { Character } from "../../types/Character.ts";
 import { CharacterItem } from "../Character/CharacterItem.tsx";
 import type { SearchParams } from "../../types/search.ts";
-import { throttle } from "../../utils/throttle.ts";
 import FilterCharacter from "../FilterCharacter/FilterCharacter.tsx";
 import CharacterDetails from "../CharacterDetails/CharacterDetails.tsx";
 import CharacterItemSkeleton from "../Character/CharacterItemSkeleton.tsx";
 import { useCharacterData } from "../../hooks/useCharacterData.ts";
+import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.ts";
 
 function Content({ searchParams }: {searchParams: SearchParams}) {
   const [currentFilterStatuses, setCurrentFilterStatuses] = useState<Array<Character["status"]>>([]);
-
   const [idCharacterDetails, setIdCharacterDetails] = useState<number | null>(null);
-  const elementRef = useRef(null);
 
   const {
     characters,
@@ -26,33 +24,12 @@ function Content({ searchParams }: {searchParams: SearchParams}) {
     setError
   } = useCharacterData(searchParams);
 
-    useEffect(() => {
-        function loadMoreHandle() {
+  //хук для бесконечной прокрутки
+  const elementRef = useInfiniteScroll(currentPage, loading, pages, () => {
             if (currentPage < pages && !loading) {
                 setCurrentPage(prev => prev + 1);
             }
-        }
-
-        const throttledLoadMore = throttle(loadMoreHandle, 5000);
-
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting && !loading && currentPage < pages && elementRef.current) {
-                throttledLoadMore();
-            }
-    }, { root: null, threshold: 0.3, rootMargin: "0px" });
-
-        if (elementRef.current && pages > 1) {
-            observer.observe(elementRef.current)
-        }
-
-        return () => {
-            if (elementRef.current) {
-                observer.unobserve(elementRef.current);
-                observer.disconnect();
-            }
-        }
-    }, [currentPage, loading, pages]);
-
+  });
     if (loadingSearch || loading && characters.length === 0) {
         return <div className="characters-container">
       {Array.from({ length: 8 }).map((_, i) => <CharacterItemSkeleton key={`load-${i}`} />)}
