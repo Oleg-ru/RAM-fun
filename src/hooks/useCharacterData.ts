@@ -20,6 +20,7 @@ export const useCharacterData = (searchParams: SearchParams) => {
       if (isFetchingRef.current) return; // Проверяем значение из ref
       isFetchingRef.current = true; // Меняем значение в ref
 
+
       try {
         if (error) {
           setError("");
